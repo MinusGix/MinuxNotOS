@@ -1,4 +1,4 @@
-OBJECTS = build/Kernel/loader.o build/Kernel/io.o build/Kernel/io_c.o build/Kernel/kmain.o build/Kernel/general_assembly.o build/Kernel/descriptor_tables.o build/Kernel/memory.o build/Kernel/isr.o build/Kernel/interrupt.o
+OBJECTS = build/Kernel/loader.o build/Kernel/io.o build/Kernel/io_c.o build/Kernel/kmain.o build/Kernel/general_assembly.o build/Kernel/descriptor_tables.o build/Kernel/memory.o build/Kernel/isr.o build/Kernel/interrupt.o build/Include/kcstring.o
 CC = clang++
 CFLAGS = -H -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -ffreestanding -O2 -mno-sse -fno-exceptions -fno-rtti -nodefaultlibs -Wall -Wextra -c
 LDFLAGS = -T link.ld -melf_i386 -nostdlib
@@ -23,6 +23,9 @@ build/:
 build/Kernel/: build/
 	mkdir -p build/Kernel
 
+build/Include/: build/
+	mkdir -p build/Include
+
 
 build/kernel.elf: build/Kernel/ $(OBJ_LINK_LIST)
 	mkdir -p build/Kernel
@@ -45,7 +48,10 @@ build/os.iso: build/kernel.elf
 run: build/os.iso
 	bochs -f bochsrc.txt -q
 
-build/Kernel/%.o: Kernel/%.cpp
+build/Kernel/%.o: build/Kernel/ Kernel/%.cpp
+	$(CC) $(CFLAGS) $< -o $@
+
+build/Include/%.o: build/Include/ Include/%.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
 build/%.o: %.cpp
