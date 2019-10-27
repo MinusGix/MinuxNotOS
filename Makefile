@@ -19,20 +19,14 @@ all: build/kernel.elf
 
 build/:
 	mkdir -p build
-
-build/Kernel/: build/
 	mkdir -p build/Kernel
-
-build/Include/: build/
-	mkdir -p build/Include
+	mkdir -p build/Include/
 
 
-build/kernel.elf: build/Kernel/ $(OBJ_LINK_LIST)
-	mkdir -p build/Kernel
+build/kernel.elf: $(OBJ_LINK_LIST)
 	ld $(LDFLAGS) $(OBJ_LINK_LIST) -o build/kernel.elf
 
 build/os.iso: build/kernel.elf
-	mkdir -p build
 	cp build/kernel.elf iso/boot/kernel.elf
 	genisoimage -rock                           \
 				-eltorito-boot $(GRUB_IMAGE)    \
@@ -45,13 +39,13 @@ build/os.iso: build/kernel.elf
 				-o build/os.iso                 \
 				iso
 
-run: build/os.iso
+run: build/ build/os.iso
 	bochs -f bochsrc.txt -q
 
-build/Kernel/%.o: build/Kernel/ Kernel/%.cpp
+build/Kernel/%.o: Kernel/%.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
-build/Include/%.o: build/Include/ Include/%.cpp
+build/Include/%.o: Include/%.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
 build/%.o: %.cpp
