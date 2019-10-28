@@ -1,6 +1,6 @@
 OBJECTS = build/Kernel/loader.o build/Kernel/io.o build/Kernel/io_c.o build/Kernel/kmain.o build/Kernel/general_assembly.o build/Kernel/descriptor_tables.o build/Kernel/memory.o build/Kernel/isr.o build/Kernel/interrupt.o build/Include/kcstring.o
 CC = clang++
-CFLAGS = -H -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -ffreestanding -O2 -mno-sse -fno-exceptions -fno-rtti -nodefaultlibs -Wall -Wextra -c
+CFLAGS = -std=c++17 -H -m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -ffreestanding -O2 -mno-sse -fno-exceptions -fno-rtti -nodefaultlibs -Wall -Wextra -c
 LDFLAGS = -T link.ld -melf_i386 -nostdlib
 AS = nasm
 ASFLAGS = -f elf
