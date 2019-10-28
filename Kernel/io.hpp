@@ -24,7 +24,7 @@ class FrameBuffer {
 
     private:
     // FIXME: This is.. irritating. I can't cast it to a char* if it's static.
-    static const uint32_t memory = 0x000B8000;
+    inline static char* memory = (char*)0x000B8000;
 
     static const uint16_t command_port = 0x3D4;
     static const uint16_t data_port = 0x3D5;

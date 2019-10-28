@@ -99,15 +99,15 @@ void FrameBuffer::writeCellAt (uint16_t absolute_position, char chr, FrameBuffer
     writeCellBackgroundAt(absolute_position, background);
 }
 void FrameBuffer::writeCellBackgroundAt (uint16_t absolute_position, FrameBuffer::Background background) {
-    uint8_t v = ((uint8_t*)memory)[absolute_position * 2 + 1];
-    ((uint8_t*)memory)[absolute_position * 2 + 1] = (v & 0b11110000) | (background & 0x0F);
+    uint8_t v = memory[absolute_position * 2 + 1];
+    memory[absolute_position * 2 + 1] = (v & 0b11110000) | (background & 0x0F);
 }
 void FrameBuffer::writeCellForegroundAt (uint16_t absolute_position, FrameBuffer::Foreground foreground) {
-    uint8_t v = ((uint8_t*)memory)[absolute_position * 2 + 1];
-    ((uint8_t*)memory)[absolute_position * 2 + 1] = (v & 0b00001111) | ((foreground & 0x0F) << 4);
+    uint8_t v = memory[absolute_position * 2 + 1];
+    memory[absolute_position * 2 + 1] = (v & 0b00001111) | ((foreground & 0x0F) << 4);
 }
 void FrameBuffer::writeCellCharacterAt (uint16_t absolute_position, char chr) {
-    ((char*)memory)[absolute_position * 2] = chr;
+    memory[absolute_position * 2] = chr;
 }
 void FrameBuffer::writeCell (char chr, FrameBuffer::Foreground foreground, FrameBuffer::Background background) {
     uint16_t pos = getAbsoluteCursorPosition();
