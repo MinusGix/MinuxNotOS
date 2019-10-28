@@ -124,9 +124,9 @@ void FrameBuffer::writeCell (char chr, FrameBuffer::Foreground foreground, Frame
 
     setAbsoluteCursorPosition(pos);
 }
-void FrameBuffer::writeString (const char* str, size_t length) {
+void FrameBuffer::writeString (const char* str, size_t length, FrameBuffer::Foreground foreground, FrameBuffer::Background background) {
     for (size_t i = 0; i < length; i++) {
-        writeCell(str[i], 2, 8);
+        writeCell(str[i], foreground, background);
     }
 }
 

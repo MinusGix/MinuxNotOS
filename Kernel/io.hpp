@@ -62,7 +62,7 @@ class FrameBuffer {
     static void writeCellForegroundAt (uint16_t absolute_position, FrameBuffer::Foreground foreground);
     static void writeCellCharacterAt (uint16_t absolute_position, char chr);
     static void writeCell (char chr, FrameBuffer::Foreground foreground, FrameBuffer::Background background);
-    static void writeString (const char* str, size_t length);
+    static void writeString (const char* str, size_t length, FrameBuffer::Foreground foreground, FrameBuffer::Background Background);
 };
 
 namespace SerialPort {
