@@ -112,11 +112,13 @@ void FrameBuffer::writeCellCharacterAt (uint16_t absolute_position, char chr) {
 void FrameBuffer::writeCell (char chr, FrameBuffer::Foreground foreground, FrameBuffer::Background background) {
     uint16_t pos = getAbsoluteCursorPosition();
 
-    writeCellAt(pos, chr, foreground, background);
-
     if (chr == '\n') {
+        // Move to next line
         pos += columns;
+        // Move back to start of line
+        pos -= pos % columns;
     } else {
+        writeCellAt(pos, chr, foreground, background);
         pos++;
     }
 
