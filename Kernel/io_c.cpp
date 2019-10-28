@@ -184,3 +184,21 @@ void SerialPort::writeString (SerialPort::COMPort com, const char* str, size_t l
         writeChar(com, str[i]);
     }
 }
+
+
+extern "C" void PIC::sendEOI (uint32_t irq) {
+    if (irq < PIC::PIC1::start_interrupt || irq > PIC::PIC2::end_interrupt) {
+        return;
+    }
+
+    //if (irq >= 8) {
+    //    outbyte(PIC2::command, Commands::EOI);
+    //}
+    //outbyte(PIC1::command, Commands::EOI);
+
+    if (irq < PIC::PIC2::start_interrupt) {
+        outbyte(PIC::PIC1::command, PIC::Commands::EOI);
+    } else {
+        outbyte(PIC::PIC2::command, PIC::Commands::EOI);
+    }
+}

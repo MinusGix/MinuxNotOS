@@ -88,4 +88,32 @@ namespace SerialPort {
     void writeString (COMPort com, const char* str, size_t length);
 };
 
+namespace PIC {
+    // Master PIC
+    struct PIC1 {
+        // IO Base address
+        static const uint16_t address = 0x20;
+        static const uint16_t command = address;
+        static const uint16_t data = address + 1;
+
+        static const uint16_t start_interrupt = 0x20;
+    };
+    // Slave pic
+    struct PIC2 {
+        // IO Base address
+        static const uint16_t address = 0xA0;
+        static const uint16_t command = address;
+        static const uint16_t data = address + 1;
+
+        static const uint16_t start_interrupt = 0x28;
+        static const uint16_t end_interrupt = start_interrupt + 7;
+    };
+
+    struct Commands {
+        static const uint16_t EOI = 0x20;
+    };
+
+    extern "C" void sendEOI (uint32_t irq);
+};
+
 #endif
