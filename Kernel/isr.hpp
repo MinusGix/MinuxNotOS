@@ -13,10 +13,11 @@ struct Registers {
     uint32_t edx;
     uint32_t ecx;
     uint32_t eax;
+} __attribute__((packed));
 
+struct StackState {
     uint32_t int_number;
     uint32_t error_code;
-
     uint32_t eip;
     uint32_t cs;
     uint32_t eflags;
@@ -24,6 +25,12 @@ struct Registers {
     uint32_t ss;
 };
 
-extern "C" void isr_handler (Registers regs);
+extern "C" void isr_handler (Registers regs, StackState state);
+
+static inline bool areInterruptsEnabled () {
+    unsigned long flags;
+    __asm__ volatile ("pushf\n\tpop %0" : "=g"(flags));
+    return flags & (1 << 9);
+}
 
 #endif
