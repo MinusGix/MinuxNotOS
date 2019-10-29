@@ -1,5 +1,6 @@
 #include "descriptor_tables.hpp"
 #include "memory.hpp"
+#include "io.hpp"
 
 extern "C" void gdt_flush(uint32_t);
 extern "C" void idt_flush(uint32_t);
@@ -71,6 +72,15 @@ static void init_idt () {
     idt_set_gate(29, (uint32_t)isr29, 0x08, 0x8E);
     idt_set_gate(30, (uint32_t)isr30, 0x08, 0x8E);
     idt_set_gate(31, (uint32_t)isr31, 0x08, 0x8E);
+    idt_set_gate(32, (uint32_t)isr32, 0x08, 0x8E);
+    idt_set_gate(33, (uint32_t)isr33, 0x08, 0x8E);
+    idt_set_gate(34, (uint32_t)isr34, 0x08, 0x8E);
+    idt_set_gate(35, (uint32_t)isr35, 0x08, 0x8E);
+    idt_set_gate(36, (uint32_t)isr36, 0x08, 0x8E);
+    idt_set_gate(37, (uint32_t)isr37, 0x08, 0x8E);
+    idt_set_gate(38, (uint32_t)isr38, 0x08, 0x8E);
+    idt_set_gate(39, (uint32_t)isr39, 0x08, 0x8E);
+    idt_set_gate(40, (uint32_t)isr40, 0x08, 0x8E);
 
     idt_flush((uint32_t)&idt_ptr);
 }

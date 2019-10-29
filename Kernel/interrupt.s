@@ -23,7 +23,7 @@ ISR_NOERRCODE 3
 ISR_NOERRCODE 4
 ISR_NOERRCODE 5
 ISR_NOERRCODE 6
-ISR_NOERRCODE 7
+ISR_ERRCODE 7
 ISR_NOERRCODE 8
 ISR_NOERRCODE 9
 ISR_NOERRCODE 10
@@ -48,17 +48,26 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
+ISR_NOERRCODE 32
+ISR_NOERRCODE 33
+ISR_NOERRCODE 34
+ISR_NOERRCODE 35
+ISR_NOERRCODE 36
+ISR_NOERRCODE 37
+ISR_NOERRCODE 38
+ISR_NOERRCODE 39
+ISR_NOERRCODE 40
 
 extern isr_handler
-; Common isr stub. Saves processor state, sets up for kernel mode segments.
-; Calls the C-level fault handler, and then restores the stack frame
+; Common isr function. Saves processor state, sets up for kernel mode segments.
+; Calls the C-level interrupt handler, and then restores the stack frame
 isr_common_stub:
-    pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+    pusha         ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
 
-    mov ax, ds               ; Lower 16-bits of eax = ds.
-    push eax                 ; save the data segment descriptor
+    mov ax, ds    ; Set lower 16-bits of eax = ds
+    push eax      ; save the data segment descriptor
 
-    mov ax, 0x10  ; load the kernel data segment descriptor
+    mov ax, 0x10  ; load the kernel data segment descriptor (16, so [2])
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -72,8 +81,9 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
 
-    popa                     ; Pops edi,esi,ebp...
+    popa           ; Pops edi,esi,ebp...
     add esp, 8     ; Cleans up the pushed error code and pushed ISR number
-    sti
-    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+    sti            ; enable interrupts
+    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP,
+                   ; Used to restore back to where we were at when the interrupt occured.
 

@@ -85,6 +85,15 @@ extern "C" void isr28 ();
 extern "C" void isr29 ();
 extern "C" void isr30 ();
 extern "C" void isr31 ();
+extern "C" void isr32 ();
+extern "C" void isr33 ();
+extern "C" void isr34 ();
+extern "C" void isr35 ();
+extern "C" void isr36 ();
+extern "C" void isr37 ();
+extern "C" void isr38 ();
+extern "C" void isr39 ();
+extern "C" void isr40 ();
 
 void init_descriptor_tables ();
 
