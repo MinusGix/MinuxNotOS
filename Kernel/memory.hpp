@@ -3,6 +3,6 @@
 
 #include "../Include/stdint.h"
 
-void memset (void* ptr, uint8_t v, size_t size);
+extern "C" void memset (void* ptr, uint8_t v, size_t size);
 
 #endif
