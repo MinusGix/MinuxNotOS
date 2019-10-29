@@ -2,6 +2,8 @@
 #define INCLUDE_IO_H
 
 #include "../Include/stdint.h"
+#include "memory.hpp"
+
 /** outbyte:
  * Sends the given data to the given I/O port. Defined in io.s
  *
@@ -42,9 +44,9 @@ class FrameBuffer {
     using Background = uint8_t;
 
     static const uint16_t columns = 80;
-    static const uint16_t rows = 80;
+    static const uint16_t rows = 25;
 
-    static uint16_t getArea ();
+    static uint16_t getMaxPosition ();
 
     static void setCursorScan (uint8_t start, uint8_t end);
 
@@ -86,8 +88,31 @@ namespace SerialPort {
     bool isTransmitFifoEmpty (COMPort com);
     void writeChar (COMPort com, char c);
     void writeString (COMPort com, const char* str, size_t length);
+    template<size_t S, typename V>
+    void writeDecimal (SerialPort::COMPort com, V val) {
+        // Note: this isn't optimal, but it's easier to write
+        char text[S];
+        memset(text, 0, sizeof(text));
+
+        size_t div = 1;
+        size_t mod = 10;
+        for (size_t i = 0; i < S; i++) {
+            text[S-i-1] = ((val % mod) / div) + 48;
+            div *= 10;
+            mod *= 10;
+        }
+        for (size_t i = 0; i < S; i++) {
+            SerialPort::writeChar(com, text[i]);
+        }
+    }
 };
 
+/*
+    In all modern PCs, you have two PICs (Programmable Interrupt Controller).
+    The master (PIC1), and the slave (PIC2).
+    The slave is hooked up to the master, and the master is hooked up to the CPU's interrupt pin.
+    This gives us 15 interruptable devices, since IRQ #2 is attached to the Slave PIC.
+*/
 namespace PIC {
     // Master PIC
     struct PIC1 {
@@ -111,9 +136,52 @@ namespace PIC {
 
     struct Commands {
         static const uint16_t EOI = 0x20;
+
+        struct ICW1 {
+            // ICW4 (not) needed
+            static const uint16_t ICW4 = 0x01;
+            // Single (cascade) mode
+            static const uint16_t Single = 0x02;
+            // Call address interval 4 (8)
+            static const uint16_t Interval4 = 0x04;
+            // Level triggered (edge) mode
+            static const uint16_t Level = 0x08;
+            // Initialization, required.
+            static const uint16_t Init = 0x10;
+        };
+
+        struct ICW4 {
+            // 8086/88 (MCS-80/85) mode
+            static const uint16_t m8086 = 0x01;
+            // Auto (normal) EOI
+            static const uint16_t Auto = 0x02;
+            // Buffered mode/slave
+            static const uint16_t BufferSlave = 0x08;
+            // Buffered mode/master
+            static const uint16_t BufferMaster = 0x0C;
+            // Special fully nested (not)
+            static const uint16_t SFNM = 0x10;
+        };
     };
 
     extern "C" void sendEOI (uint32_t irq);
+
+    /** remapPIC:
+     *
+     * @param offset1 Vector offset for master PIC. Vectors on master become offset1..offset1+7
+     * @param offset2 Same for slave PIC: offset2..offset2+7
+     */
+    extern "C" void remapPIC ();
+
+    void setIRQMask (uint8_t IRQ_line);
+
+    void clearIRQMask (uint8_t IRQ_line);
+};
+
+namespace Keyboard {
+    static const uint16_t data_port = 0x60;
+
+    uint8_t readScanCode ();
 };
 
 #endif

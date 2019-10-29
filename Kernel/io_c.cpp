@@ -30,8 +30,8 @@
     ```
 */
 
-uint16_t FrameBuffer::getArea () {
-    return columns * rows;
+uint16_t FrameBuffer::getMaxPosition () {
+    return columns*rows - 1;
 }
 
 void FrameBuffer::setCursorScan (uint8_t start, uint8_t end) {
@@ -56,7 +56,7 @@ void FrameBuffer::setCursorPosition (FrameBuffer::Point point) {
     setCursorPosition(point.x, point.y);
 }
 void FrameBuffer::setAbsoluteCursorPosition (uint16_t absolute_position) {
-    if (absolute_position >= getArea()) {
+    if (absolute_position > getMaxPosition()) {
         // Fail silently.
         return;
     }
@@ -87,7 +87,7 @@ FrameBuffer::Point FrameBuffer::getCursorPosition () {
 }
 
 void FrameBuffer::writeCellAt (uint16_t absolute_position, char chr, FrameBuffer::Foreground foreground, FrameBuffer::Background background) {
-    if (absolute_position >= getArea()) {
+    if (absolute_position > getMaxPosition()) {
         // Fail silently.
         return;
     }
@@ -99,14 +99,26 @@ void FrameBuffer::writeCellAt (uint16_t absolute_position, char chr, FrameBuffer
     writeCellBackgroundAt(absolute_position, background);
 }
 void FrameBuffer::writeCellBackgroundAt (uint16_t absolute_position, FrameBuffer::Background background) {
+    if (absolute_position > getMaxPosition()) {
+        // Fail silently.
+        return;
+    }
     uint8_t v = memory[absolute_position * 2 + 1];
     memory[absolute_position * 2 + 1] = (v & 0b11110000) | (background & 0x0F);
 }
 void FrameBuffer::writeCellForegroundAt (uint16_t absolute_position, FrameBuffer::Foreground foreground) {
+    if (absolute_position > getMaxPosition()) {
+        // Fail silently.
+        return;
+    }
     uint8_t v = memory[absolute_position * 2 + 1];
     memory[absolute_position * 2 + 1] = (v & 0b00001111) | ((foreground & 0x0F) << 4);
 }
 void FrameBuffer::writeCellCharacterAt (uint16_t absolute_position, char chr) {
+    if (absolute_position > getMaxPosition()) {
+        // Fail silently.
+        return;
+    }
     memory[absolute_position * 2] = chr;
 }
 void FrameBuffer::writeCell (char chr, FrameBuffer::Foreground foreground, FrameBuffer::Background background) {
@@ -120,6 +132,18 @@ void FrameBuffer::writeCell (char chr, FrameBuffer::Foreground foreground, Frame
     } else {
         writeCellAt(pos, chr, foreground, background);
         pos++;
+    }
+
+    if (pos > getMaxPosition()) {
+        for (size_t i = 0; i < columns * (rows - 1); i++) {
+            memory[i * 2] = memory[(i + columns) * 2];
+            memory[i * 2 + 1] = memory[(i + columns) * 2 + 1];
+        }
+        for (size_t i = columns * (rows - 1); i < columns * rows; i++) {
+            memory[i * 2] = ' ';
+            memory[i * 2 + 1] = 15;
+        }
+        pos = getMaxPosition() - columns + 1;
     }
 
     setAbsoluteCursorPosition(pos);
@@ -190,17 +214,78 @@ void SerialPort::writeString (SerialPort::COMPort com, const char* str, size_t l
 
 extern "C" void PIC::sendEOI (uint32_t irq) {
     if (irq < PIC::PIC1::start_interrupt || irq > PIC::PIC2::end_interrupt) {
-        return;
+        //return;
     }
 
-    //if (irq >= 8) {
-    //    outbyte(PIC2::command, Commands::EOI);
+    if (irq >= 8) {
+        outbyte(PIC2::command, Commands::EOI);
+    }
+    outbyte(PIC1::command, Commands::EOI);
+
+    //if (irq < PIC::PIC2::start_interrupt) {
+      //  outbyte(PIC::PIC1::command, PIC::Commands::EOI);
+    //} else {
+      //  outbyte(PIC::PIC2::command, PIC::Commands::EOI);
     //}
-    //outbyte(PIC1::command, Commands::EOI);
+}
 
-    if (irq < PIC::PIC2::start_interrupt) {
-        outbyte(PIC::PIC1::command, PIC::Commands::EOI);
+extern "C" void PIC::remapPIC () {
+    uint8_t a1;
+    uint8_t a2;
+
+    // Save masks
+    a1 = inbyte(PIC::PIC1::data);
+    a2 = inbyte(PIC::PIC2::data);
+
+    // Start initialization sequence (in cascade mode)
+    outbyte(PIC::PIC1::command, PIC::Commands::ICW1::Init | PIC::Commands::ICW1::ICW4);
+    outbyte(PIC::PIC2::command, PIC::Commands::ICW1::Init | PIC::Commands::ICW1::ICW4);
+    // ICW2: Master PIC vector offset
+    outbyte(PIC::PIC1::data, PIC::PIC1::start_interrupt);
+    // ICW2:: Slave PIC vector offset
+    outbyte(PIC::PIC2::data, PIC::PIC2::start_interrupt);
+    // ICW3: Tell master that here is a slave at IRQ2 (0000_0100)
+    outbyte(PIC::PIC1::data, 4);
+    // ICW3: Tell slave its cascade identity (0000_0010)
+    outbyte(PIC::PIC2::data, 2);
+
+    outbyte(PIC::PIC1::data, PIC::Commands::ICW4::m8086);
+    outbyte(PIC::PIC2::data, PIC::Commands::ICW4::m8086);
+
+    // Restore saved masks
+    outbyte(PIC::PIC1::data, a1);
+    outbyte(PIC::PIC2::data, a2);
+
+}
+
+void PIC::setIRQMask (uint8_t IRQ_line) {
+    uint16_t port;
+    uint8_t value;
+
+    if (IRQ_line < 8) {
+        port = PIC::PIC1::data;
     } else {
-        outbyte(PIC::PIC2::command, PIC::Commands::EOI);
+        port = PIC::PIC2::data;
+        IRQ_line -= 8;
     }
+    value = inbyte(port) | (1 << IRQ_line);
+    outbyte(port, value);
+}
+
+void PIC::clearIRQMask (uint8_t IRQ_line) {
+    uint16_t port;
+    uint8_t value;
+
+    if (IRQ_line < 8) {
+        port = PIC::PIC1::data;
+    } else {
+        port = PIC::PIC2::data;
+        IRQ_line -= 8;
+    }
+    value = inbyte(port) & ~(1 << IRQ_line);
+    outbyte(port, value);
+}
+
+uint8_t Keyboard::readScanCode () {
+    return inbyte(Keyboard::data_port);
 }
