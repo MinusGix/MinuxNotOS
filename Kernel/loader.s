@@ -20,6 +20,8 @@ align 4                         ; the code must be 4 byte aligned
 loader:                         ; the loader label (defined as entry point in linker script)
     mov esp, kernel_stack + KERNEL_STACK_SIZE ; point esp to the start of the stack (end of mem area)
 
+    push KERNEL_STACK_SIZE
+    push kernel_stack
     extern kmain ; see kmain.c
     call kmain
 .loop:
