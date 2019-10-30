@@ -16,16 +16,13 @@ struct Registers {
 } __attribute__((packed));
 
 struct StackState {
-    uint32_t int_number;
     uint32_t error_code;
     uint32_t eip;
     uint32_t cs;
     uint32_t eflags;
-    uint32_t useresp;
-    uint32_t ss;
 } __attribute__((packed));
 
-extern "C" void isr_handler (Registers regs, StackState state);
+extern "C" void isr_handler (Registers regs, uint32_t int_number, StackState state);
 
 static inline bool areInterruptsEnabled () {
     unsigned long flags;
