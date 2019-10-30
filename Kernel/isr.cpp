@@ -2,10 +2,6 @@
 #include "io.hpp"
 #include "../Include/kcstring.hpp"
 
-uint8_t toIRQLine (uint32_t int_number) {
-    return int_number - 13;
-}
-
 extern "C" void isr_handler (Registers regs, uint32_t int_number, StackState state) {
     const char* text = "Unhandled INT ";
 
