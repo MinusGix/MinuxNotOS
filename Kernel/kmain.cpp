@@ -3,8 +3,34 @@
 #include "descriptor_tables.hpp"
 #include "context.hpp"
 #include "../Include/kcstring.hpp"
+/* To remind myself how the stack is structured until I retain the knowledge:
+struct Alpha {
+    uint32_t a;
+    uint32_t b;
+    uint32_t c;
+};
 
-extern "C" void kmain () {
+extern "C" uint32_t test_func (Alpha a, Alpha b);
+
+asm:
+global test_func
+; stack: 
+;        [esp + 24] b.c
+;        [esp + 20] b.b
+;        [esp + 16] b.a
+
+;        [esp + 12] a.c
+;        [esp + 8 ] a.b
+;        [esp + 4 ] a.a
+;        [esp     ] return pointer
+test_func:
+    mov eax, [esp + 16]
+    ret
+
+
+*/
+
+extern "C" void kmain (uint32_t stack_position, uint32_t stack_size) {
     init_descriptor_tables();
 
     // Enable interrupts again
