@@ -23,7 +23,7 @@ struct StackState {
     uint32_t eflags;
     uint32_t useresp;
     uint32_t ss;
-};
+} __attribute__((packed));
 
 extern "C" void isr_handler (Registers regs, StackState state);
 
