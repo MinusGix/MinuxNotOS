@@ -4,7 +4,7 @@
     isr%1:
         cli ; disable interrupts
         push byte 0 ; dummy error code
-        push byte %1 ; interrupt number
+        push %1 ; interrupt number
         jmp isr_common_stub
 %endmacro
 
@@ -12,7 +12,7 @@
     global isr%1
     isr%1:
         cli ; disable interrupts
-        push byte %1 ; interrupt number
+        push %1 ; interrupt number
         jmp isr_common_stub
 %endmacro
 
