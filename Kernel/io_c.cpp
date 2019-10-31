@@ -295,7 +295,7 @@ uint8_t Keyboard::readScanCode () {
     return inbyte(Keyboard::data_port);
 }
 
-void Keyboard::interruptHandler (ISR::Registers, int32_t int_number, ISR::StackState state) {
+void Keyboard::interruptHandler (ISR::Registers, ISR::Interrupt int_number, ISR::StackState state) {
     SerialPort::writeString(SerialPort::LOG, "Key Pressed/Released ", 21);
 
     uint8_t v = Keyboard::readScanCode();

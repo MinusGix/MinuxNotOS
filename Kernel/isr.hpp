@@ -5,6 +5,9 @@
 #include "function.hpp"
 
 namespace ISR {
+    using Interrupt = uint32_t;
+
+
     struct Registers {
         uint32_t ds; // data segment selector
         uint32_t edi;
@@ -24,7 +27,7 @@ namespace ISR {
         uint32_t eflags;
     } __attribute__((packed));
 
-    extern "C" void isr_handler (Registers regs, uint32_t int_number, StackState state);
+    extern "C" void isr_handler (Registers regs, ISR::Interrupt int_number, StackState state);
 
     static inline bool areInterruptsEnabled () {
         unsigned long flags;
@@ -35,7 +38,7 @@ namespace ISR {
     void initialiseInterrupts ();
 
     const static uint32_t interrupt_handler_count = 256;
-    using InterruptHandlerFunction = Function<void(Registers, int32_t, StackState)>;
+    using InterruptHandlerFunction = Function<void(Registers, ISR::Interrupt, StackState)>;
     extern InterruptHandlerFunction interrupt_handlers[interrupt_handler_count];
 
     template<typename T>
