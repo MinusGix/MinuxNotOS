@@ -4,6 +4,10 @@
 #include "../Include/stdint.h"
 
 namespace GDT {
+    namespace detail {
+        extern "C" void gdt_flush(uint32_t);
+    }
+
     struct Entry {
         uint16_t limit_low;
         uint16_t base_low;
@@ -29,6 +33,12 @@ namespace GDT {
         // Address of the first GDTEntry
         uint32_t base;
     } __attribute__((packed));
+
+    void init ();
+
+    void flush (uint32_t gdt_pointer);
+
+    void setGate (int32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
 }
 
 
@@ -53,6 +63,12 @@ namespace IDT {
         // address of fire element in interrupt array
         uint32_t base;
     } __attribute__((packed));
+
+    void init ();
+
+    extern "C" void idt_flush(uint32_t);
+
+    void setGate (uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
 }
 
 void init_descriptor_tables ();
