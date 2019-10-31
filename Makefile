@@ -15,7 +15,7 @@ CRTN_OBJ=build/Kernel/crtn.o
 OBJ_LINK_LIST:=$(CRTI_OBJ) $(CRTBEGIN_OBJ) $(OBJECTS) $(CRTEND_OBJ) $(CRTN_OBJ)
 INTERNAL_OBJS:=$(CRTI_OBJ) $(OBJS) $(CRTN_OBJ)
 
-all: build/kernel.elf
+all: build/ build/os.iso
 
 build/:
 	mkdir -p build
