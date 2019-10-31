@@ -2,12 +2,12 @@
 #include "io.hpp"
 #include "../Include/kcstring.hpp"
 
-Function<void(Registers, int32_t, StackState)> interrupt_handlers[interrupt_handler_count];
+Function<void(ISR::Registers, int32_t, ISR::StackState)> ISR::interrupt_handlers[ISR::interrupt_handler_count];
 
 void initialiseInterrupts () {}
 
-extern "C" void isr_handler (Registers regs, uint32_t int_number, StackState state) {
-    if (int_number < interrupt_handler_count && interrupt_handlers[int_number].hasFunction()) {
+extern "C" void ISR::isr_handler (ISR::Registers regs, uint32_t int_number, ISR::StackState state) {
+    if (int_number < ISR::interrupt_handler_count && ISR::interrupt_handlers[int_number].hasFunction()) {
         interrupt_handlers[int_number](regs, int_number, state);
         return;
     }

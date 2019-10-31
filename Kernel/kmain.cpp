@@ -49,7 +49,7 @@ extern "C" void kmain (uint32_t stack_position, uint32_t stack_size) {
     char* alpha = "Starting up";
     FrameBuffer::writeString(alpha, KCString::getLength(alpha), 2, 8);
 
-    if (areInterruptsEnabled()) {
+    if (ISR::areInterruptsEnabled()) {
         FrameBuffer::writeCell('1', 3, 8);
     } else {
         FrameBuffer::writeCell('0', 3, 8);

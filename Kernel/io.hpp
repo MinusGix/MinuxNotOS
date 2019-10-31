@@ -188,7 +188,7 @@ namespace Keyboard {
 
     uint8_t readScanCode ();
 
-    void interruptHandler (Registers regs, int32_t int_number, StackState state);
+    void interruptHandler (ISR::Registers regs, int32_t int_number, ISR::StackState state);
 };
 
 #endif
