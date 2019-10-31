@@ -14,7 +14,7 @@ extern "C" void isr_handler (Registers regs, uint32_t int_number, StackState sta
 
     const char* text = "Unhandled INT ";
 
-    SerialPort::writeString(SerialPort::COM1, text, KCString::getLength(text));
+    SerialPort::writeString(SerialPort::LOG, text, KCString::getLength(text));
     FrameBuffer::writeString(text, KCString::getLength(text), 2, 4);
 
     char num_text[3] = {0, 0, 0};
@@ -27,7 +27,7 @@ extern "C" void isr_handler (Registers regs, uint32_t int_number, StackState sta
     FrameBuffer::writeCell(num_text[0], 2, 4);
     FrameBuffer::writeCell(num_text[1], 2, 4);
     FrameBuffer::writeCell(num_text[2], 2, 4);
-    SerialPort::writeDecimal<3, uint8_t>(SerialPort::COM1, num);
+    SerialPort::writeDecimal<3, uint8_t>(SerialPort::LOG, num);
     FrameBuffer::writeCell('\n', 2, 4);
-    SerialPort::writeChar(SerialPort::COM1, '\n');
+    SerialPort::writeChar(SerialPort::LOG, '\n');
 }

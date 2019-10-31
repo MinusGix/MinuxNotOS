@@ -73,6 +73,8 @@ namespace SerialPort {
 
     const COMPort COM1 = 0x3F8;
 
+    const COMPort LOG = COM1;
+
     struct LineCommands {
         static const uint8_t enableDLAB = 0x80;
     };

@@ -55,15 +55,15 @@ extern "C" void kmain (uint32_t stack_position, uint32_t stack_size) {
         FrameBuffer::writeCell('0', 3, 8);
     }
 
-    SerialPort::configureBaudRate(SerialPort::COM1, 0x0006);
-    SerialPort::configureLine(SerialPort::COM1);
-    SerialPort::writeString(SerialPort::COM1, alpha, 6);
+    SerialPort::configureBaudRate(SerialPort::LOG, 0x0006);
+    SerialPort::configureLine(SerialPort::LOG);
+    SerialPort::writeString(SerialPort::LOG, alpha, 6);
 
-    SerialPort::writeChar(SerialPort::COM1, '\n');
-    SerialPort::writeDecimal<10, uint32_t>(SerialPort::COM1, stack_position);
-    SerialPort::writeChar(SerialPort::COM1, '-');
-    SerialPort::writeDecimal<10, uint32_t>(SerialPort::COM1, stack_size);
-    SerialPort::writeChar(SerialPort::COM1, '\n');
+    SerialPort::writeChar(SerialPort::LOG, '\n');
+    SerialPort::writeDecimal<10, uint32_t>(SerialPort::LOG, stack_position);
+    SerialPort::writeChar(SerialPort::LOG, '-');
+    SerialPort::writeDecimal<10, uint32_t>(SerialPort::LOG, stack_size);
+    SerialPort::writeChar(SerialPort::LOG, '\n');
 
     __asm__ volatile ("int $0x3");
     __asm__ volatile ("int $0x4");
