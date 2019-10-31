@@ -14,6 +14,14 @@ class Function<ReturnValue(Args...)> {
 
     public:
 
+    explicit Function () {
+        callable = 0;
+    }
+
+    bool hasFunction () const {
+        return callable != 0;
+    }
+
     template<typename T>
     Function& operator= (T* t) {
         callable = t;
