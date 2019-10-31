@@ -3,6 +3,8 @@
 
 #include "../Include/stdint.h"
 
-extern "C" void memset (void* ptr, uint8_t v, size_t size);
+namespace Memory {
+    void memset (void* ptr, uint8_t v, size_t size);
+};
 
 #endif

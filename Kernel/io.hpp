@@ -95,7 +95,7 @@ namespace SerialPort {
     void writeDecimal (SerialPort::COMPort com, V val) {
         // Note: this isn't optimal, but it's easier to write
         char text[S];
-        memset(text, 0, sizeof(text));
+        Memory::memset(text, 0, sizeof(text));
 
         size_t div = 1;
         size_t mod = 10;

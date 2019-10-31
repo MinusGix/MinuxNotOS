@@ -39,7 +39,7 @@ static void init_idt () {
     idt_ptr.limit = sizeof(IDTEntry) * 256 -1;
     idt_ptr.base  = (uint32_t)&idt_entries;
 
-    memset(&idt_entries, 0, sizeof(IDTEntry)*256);
+    Memory::memset(&idt_entries, 0, sizeof(IDTEntry)*256);
 
     idt_set_gate(0, (uint32_t)isr0, 0x08, 0x8E);
     idt_set_gate(1, (uint32_t)isr1, 0x08, 0x8E);
