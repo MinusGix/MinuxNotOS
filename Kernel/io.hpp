@@ -181,7 +181,7 @@ namespace PIC {
     void clearIRQMask (uint8_t IRQ_line);
 };
 
-namespace Keyboard {
+namespace PS2Keyboard {
     static const uint16_t data_port = 0x60;
 
     void initialise ();

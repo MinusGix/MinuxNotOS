@@ -287,18 +287,18 @@ void PIC::clearIRQMask (uint8_t IRQ_line) {
 }
 
 
-void Keyboard::initialise () {
-    ISR::setInterruptHandler(33, Keyboard::interruptHandler);
+void PS2Keyboard::initialise () {
+    ISR::setInterruptHandler(33, PS2Keyboard::interruptHandler);
 }
 
-uint8_t Keyboard::readScanCode () {
-    return inbyte(Keyboard::data_port);
+uint8_t PS2Keyboard::readScanCode () {
+    return inbyte(PS2Keyboard::data_port);
 }
 
-void Keyboard::interruptHandler (ISR::Registers, ISR::Interrupt int_number, ISR::StackState state) {
+void PS2Keyboard::interruptHandler (ISR::Registers, ISR::Interrupt int_number, ISR::StackState state) {
     SerialPort::writeString(SerialPort::LOG, "Key Pressed/Released ", 21);
 
-    uint8_t v = Keyboard::readScanCode();
+    uint8_t v = PS2Keyboard::readScanCode();
 
     // Acknowledge it
     PIC::sendEOI(int_number);

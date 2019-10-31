@@ -43,7 +43,7 @@ extern "C" void kmain (uint32_t stack_position, uint32_t stack_size) {
 
     FrameBuffer::setCursorPosition(0, 0);
 
-    Keyboard::initialise();
+    PS2Keyboard::initialise();
 
 
     char* alpha = "Starting up";
