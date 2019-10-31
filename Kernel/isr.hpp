@@ -6,25 +6,28 @@
 
 namespace ISR {
     using Interrupt = uint32_t;
+    using Register32 = uint32_t;
+    using SegmentRegister32 = Register32;
+    using EFlagsRegister32 = Register32;
 
 
     struct Registers {
-        uint32_t ds; // data segment selector
-        uint32_t edi;
-        uint32_t esi;
-        uint32_t ebp;
-        uint32_t esp;
-        uint32_t ebx;
-        uint32_t edx;
-        uint32_t ecx;
-        uint32_t eax;
+        SegmentRegister32 ds; // data segment selector
+        Register32 edi;
+        Register32 esi;
+        Register32 ebp;
+        Register32 esp;
+        Register32 ebx;
+        Register32 edx;
+        Register32 ecx;
+        Register32 eax;
     } __attribute__((packed));
 
     struct StackState {
         uint32_t error_code;
-        uint32_t eip;
-        uint32_t cs;
-        uint32_t eflags;
+        Register32 eip;
+        SegmentRegister32 cs;
+        EFlagsRegister32 eflags;
     } __attribute__((packed));
 
     extern "C" void isr_handler (Registers regs, ISR::Interrupt int_number, StackState state);
