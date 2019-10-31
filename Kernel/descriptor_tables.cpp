@@ -12,10 +12,10 @@ static void init_idt();
 static void gdt_set_gate (int32_t, uint32_t, uint32_t, uint8_t, uint8_t);
 static void idt_set_gate (uint8_t, uint32_t, uint16_t, uint8_t);
 
-GDTEntry gdt_entries[5];
-GDTPointer gdt_ptr;
-IDTEntry idt_entries[256];
-IDTPointer idt_ptr;
+GDT::Entry gdt_entries[5];
+GDT::Pointer gdt_ptr;
+IDT::Entry idt_entries[256];
+IDT::Pointer idt_ptr;
 
 void init_descriptor_tables () {
     init_gdt();
@@ -23,7 +23,7 @@ void init_descriptor_tables () {
 }
 
 static void init_gdt () {
-    gdt_ptr.limit = (sizeof(GDTEntry) * 5) - 1;
+    gdt_ptr.limit = (sizeof(GDT::Entry) * 5) - 1;
     gdt_ptr.base = (uint32_t)&gdt_entries;
 
     gdt_set_gate(0, 0, 0,          0,    0);    // Null segment
@@ -36,10 +36,10 @@ static void init_gdt () {
 }
 
 static void init_idt () {
-    idt_ptr.limit = sizeof(IDTEntry) * 256 -1;
+    idt_ptr.limit = sizeof(IDT::Entry) * 256 -1;
     idt_ptr.base  = (uint32_t)&idt_entries;
 
-    Memory::memset(&idt_entries, 0, sizeof(IDTEntry)*256);
+    Memory::memset(&idt_entries, 0, sizeof(IDT::Entry)*256);
 
     idt_set_gate(0, (uint32_t)ISR::isr0, 0x08, 0x8E);
     idt_set_gate(1, (uint32_t)ISR::isr1, 0x08, 0x8E);
