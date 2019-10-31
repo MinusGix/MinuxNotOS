@@ -42,6 +42,10 @@ extern "C" void kmain (uint32_t stack_position, uint32_t stack_size) {
     outbyte(PIC::PIC2::data, 0b11111111);
 
     FrameBuffer::setCursorPosition(0, 0);
+
+    Keyboard::initialise();
+
+
     char* alpha = "Starting up";
     FrameBuffer::writeString(alpha, KCString::getLength(alpha), 2, 8);
 

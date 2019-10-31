@@ -3,6 +3,7 @@
 
 #include "../Include/stdint.h"
 #include "memory.hpp"
+#include "isr.hpp"
 
 /** outbyte:
  * Sends the given data to the given I/O port. Defined in io.s
@@ -181,7 +182,11 @@ namespace PIC {
 namespace Keyboard {
     static const uint16_t data_port = 0x60;
 
+    void initialise ();
+
     uint8_t readScanCode ();
+
+    void interruptHandler (Registers regs, int32_t int_number, StackState state);
 };
 
 #endif

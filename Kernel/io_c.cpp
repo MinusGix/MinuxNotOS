@@ -286,6 +286,23 @@ void PIC::clearIRQMask (uint8_t IRQ_line) {
     outbyte(port, value);
 }
 
+
+void Keyboard::initialise () {
+    setInterruptHandler(33, Keyboard::interruptHandler);
+}
+
 uint8_t Keyboard::readScanCode () {
     return inbyte(Keyboard::data_port);
+}
+
+void Keyboard::interruptHandler (Registers, int32_t int_number, StackState state) {
+    SerialPort::writeString(SerialPort::COM1, "Key Pressed/Released ", 21);
+
+    uint8_t v = Keyboard::readScanCode();
+
+    // Acknowledge it
+    PIC::sendEOI(int_number);
+
+    SerialPort::writeDecimal<3, uint8_t>(SerialPort::COM1, v);
+    SerialPort::writeChar(SerialPort::COM1, '\n');
 }
