@@ -18,6 +18,10 @@ class Function<ReturnValue(Args...)> {
         callable = 0;
     }
 
+    explicit Function (ReturnValue (*z) (Args...)) {
+        callable = z;
+    }
+
     bool hasFunction () const {
         return callable != 0;
     }
